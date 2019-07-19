@@ -12,6 +12,7 @@ describe('Webhooks', function() {
 	let messages = [];
 	const tommasoID = `tommaso-${uuidv4()}`;
 	const thierryID = `thierry-${uuidv4()}`;
+	const horatiuID = `horatiu-${uuidv4()}`;
 	const jaapID = `jaap-${uuidv4()}`;
 	const channelID = `fun-${uuidv4()}`;
 	const client = getTestClient(true);
@@ -58,7 +59,9 @@ describe('Webhooks', function() {
 		await sleep(100);
 		await client.updateUser({ id: thierryID });
 		await client.updateUser({ id: tommasoID });
+		await client.updateUser({ id: horatiuID });
 		await client.updateUser({ id: jaapID });
+		await chan.create();
 	});
 
 	beforeEach(function() {
@@ -74,7 +77,6 @@ describe('Webhooks', function() {
 	});
 
 	it('should receive new message event', async function() {
-		await chan.create();
 		await Promise.all([
 			chan.sendMessage({ text: uuidv4(), user: { id: tommasoID } }),
 			lastMessagePromise,
@@ -110,6 +112,40 @@ describe('Webhooks', function() {
 		expect(lastMessage.members[1].user.unread_channels).to.eq(0);
 		expect(lastMessage.members[1].user.id).to.eq(tommasoID);
 		expect(lastMessage.members[1].user.online).to.eq(false);
+	});
+
+	it('should receive new message event with thread participants', async function() {
+		await Promise.all([chan.addMembers([horatiuID]), lastMessagePromise]);
+
+		const messageResponse = (await Promise.all([
+			chan.sendMessage({ text: uuidv4(), user: { id: tommasoID } }),
+			lastMessagePromise,
+		]))[0];
+		await Promise.all([
+			chan.sendMessage({
+				text: uuidv4(),
+				user: { id: thierryID },
+				parent_id: messageResponse.message.id,
+			}),
+			lastMessagePromise,
+		]);
+		await Promise.all([
+			chan.sendMessage({
+				text: uuidv4(),
+				user: { id: tommasoID },
+				parent_id: messageResponse.message.id,
+			}),
+			lastMessagePromise,
+		]);
+		expect(lastMessage).to.not.be.null;
+		expect(lastMessage.type).to.eq('message.new');
+		expect(lastMessage.thread_participants).to.not.be.null;
+		expect(lastMessage.thread_participants).to.be.an('array');
+		expect(lastMessage.thread_participants).to.have.length(2);
+		expect(lastMessage.members[0].user).to.be.an('object');
+		expect(lastMessage.members[0].user.id).to.eq(thierryID);
+		expect(lastMessage.members[1].user).to.be.an('object');
+		expect(lastMessage.members[1].user.id).to.eq(tommasoID);
 	});
 
 	let messageResponse;
@@ -265,9 +301,10 @@ describe('Webhooks', function() {
 	it('member.removed', async function() {
 		await Promise.all([chan.removeMembers([thierryID]), lastMessagePromise]);
 		await Promise.all([chan.removeMembers([tommasoID]), lastMessagePromise]);
+		await Promise.all([chan.removeMembers([horatiuID]), lastMessagePromise]);
 		await Promise.all([chan.removeMembers([jaapID]), lastMessagePromise]);
 		expect(lastMessage).to.not.be.null;
-		expect(messages).to.have.length(3);
+		expect(messages).to.have.length(4);
 		expect(lastMessage.type).to.eq('member.removed');
 		expect(lastMessage.user).to.be.an('object');
 	});

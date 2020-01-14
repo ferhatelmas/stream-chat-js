@@ -7,7 +7,6 @@ import {
 	getTestClient,
 	getTestClientForUser,
 	getServerTestClient,
-	sleep,
 } from './utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';

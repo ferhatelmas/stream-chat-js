@@ -1,5 +1,3 @@
-/* eslint no-unused-vars: "off" */
-
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiLike from 'chai-like';
@@ -14,11 +12,9 @@ import {
 	createUserToken,
 	getTestClient,
 	getTestClientForUser,
-	runAndLogPromise,
 	getServerTestClient,
 	createUsers,
 	sleep,
-	getTestClientForUser2,
 } from './utils';
 import uuidv4 from 'uuid/v4';
 

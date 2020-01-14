@@ -1,10 +1,5 @@
-/* eslint no-unused-vars: "off" */
-
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import Immutable from 'seamless-immutable';
-import { StreamChat } from '../src';
-import fs from 'fs';
 import {
 	createUserToken,
 	getTestClient,
@@ -12,8 +7,6 @@ import {
 	getTestClientForUser2,
 	createUsers,
 	runAndLogPromise,
-	sleep,
-	getServerTestClient,
 	newEventPromise,
 } from './utils';
 import uuidv4 from 'uuid/v4';

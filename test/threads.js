@@ -1,20 +1,6 @@
-/* eslint no-unused-vars: "off" */
-
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import Immutable from 'seamless-immutable';
-import { StreamChat } from '../src';
-import fs from 'fs';
-import {
-	createUserToken,
-	getTestClient,
-	getTestClientForUser,
-	getTestClientForUser2,
-	getServerTestClient,
-	sleep,
-	runAndLogPromise,
-} from './utils';
-import uuidv4 from 'uuid/v4';
+import { getTestClientForUser, getServerTestClient, runAndLogPromise } from './utils';
 
 const expect = chai.expect;
 

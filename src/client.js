@@ -1,4 +1,3 @@
-/* eslint no-unused-vars: "off" */
 /* global process */
 
 import axios from 'axios';
